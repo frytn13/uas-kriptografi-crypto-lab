@@ -84,7 +84,7 @@ class GostService
 
         $this->assertKey($key);
 
-        $cipherBlock = hex2bin($ciphertextHex);
+        $cipherBlock = $this->reverse64Bit(hex2bin($ciphertextHex));
 
         if ($cipherBlock === false) {
             throw new InvalidArgumentException('Ciphertext hex tidak valid.');
@@ -92,8 +92,6 @@ class GostService
 
         $roundKeys = array_reverse($this->createEncryptionRoundKeys($key));
         $result = $this->processBlock($cipherBlock, $roundKeys, 'decrypt');
-        $plainPadded = $this->reverse64Bit($result['block']);
-        $plaintext = rtrim($plainPadded, ' ');
 
         return [
             'mode' => 'decrypt',
@@ -103,10 +101,10 @@ class GostService
             'key' => $key,
             'key_hex' => strtoupper(bin2hex($key)),
             'key_length' => strlen($key) . ' characters / 256 bit',
-            'plaintext' => $plaintext,
-            'plaintext_padded' => $plainPadded,
-            'plaintext_hex' => strtoupper(bin2hex($plainPadded)),
-            'plaintext_binary' => $this->bytesToBinary($plainPadded),
+            'plaintext' => $result['block'],
+            'plaintext_padded' => $result['block'],
+            'plaintext_hex' => strtoupper(bin2hex($result['block'])),
+            'plaintext_binary' => $this->bytesToBinary($result['block']),
             'round_count' => 32,
             'rounds' => $result['rounds'],
             'subkeys' => $this->describeSubkeys($key),
@@ -254,7 +252,7 @@ class GostService
             $roundNumber = $index + 1;
             $fValue = $this->roundFunction($right, $roundKey['value']);
             if ($roundNumber == 32) {
-                $newLeft = $left ^ $fValue & self::MASK_32;
+                $newLeft = ($left ^ $fValue) & self::MASK_32;
                 $newRight = $right;
             } else {
                 $newLeft = $right;
