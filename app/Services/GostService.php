@@ -19,14 +19,41 @@ class GostService
         [1, 15, 13, 0, 5, 7, 10, 4, 9, 2, 3, 14, 6, 11, 8, 12],
     ];
 
+    private function reverse64Bit(string $block): string
+    {
+        $binary = $this->bytesToBinary($block);
+        $reversedBinary = strrev($binary);
+
+        $result = '';
+
+        for ($i = 0; $i < strlen($reversedBinary); $i += 8) {
+            $byte = substr($reversedBinary, $i, 8);
+            $result .= chr(bindec($byte));
+        }
+
+        return $result;
+    }
+
+    private function reverse32Bit(int $value): int
+    {
+        $value &= self::MASK_32;
+
+        $binary = str_pad(decbin($value), 32, '0', STR_PAD_LEFT);
+        $reversed = strrev($binary);
+
+        return bindec($reversed) & self::MASK_32;
+    }
+
     public function encryptText(string $plaintext, string $key): array
     {
         $this->assertSingleBlockPlaintext($plaintext);
         $this->assertKey($key);
 
         $plainBlock = str_pad($plaintext, 8, ' ');
+        $plainReverse = $this->reverse64Bit($plainBlock);
+
         $roundKeys = $this->createEncryptionRoundKeys($key);
-        $result = $this->processBlock($plainBlock, $roundKeys, 'encrypt');
+        $result = $this->processBlock($plainReverse, $roundKeys, 'encrypt');
 
         return [
             'mode' => 'encrypt',
@@ -65,7 +92,7 @@ class GostService
 
         $roundKeys = array_reverse($this->createEncryptionRoundKeys($key));
         $result = $this->processBlock($cipherBlock, $roundKeys, 'decrypt');
-        $plainPadded = $result['block'];
+        $plainPadded = $this->reverse64Bit($result['block']);
         $plaintext = rtrim($plainPadded, ' ');
 
         return [
@@ -168,8 +195,10 @@ class GostService
         $subkeys = $this->splitKeyToSubkeys($key);
         $roundKeys = [];
 
+        // 1–24: K1 until K8 (3 times)
         for ($round = 0; $round < 24; $round++) {
             $index = $round % 8;
+
             $roundKeys[] = [
                 'round' => $round + 1,
                 'label' => 'K' . ($index + 1),
@@ -177,11 +206,12 @@ class GostService
             ];
         }
 
-        for ($index = 7; $index >= 0; $index--) {
+        // 25–32: K8 until K1
+        for ($i = 7; $i >= 0; $i--) {
             $roundKeys[] = [
                 'round' => count($roundKeys) + 1,
-                'label' => 'K' . ($index + 1),
-                'value' => $subkeys[$index],
+                'label' => 'K' . ($i + 1),
+                'value' => $subkeys[$i],
             ];
         }
 
@@ -194,7 +224,9 @@ class GostService
 
         for ($index = 0; $index < 8; $index++) {
             $chunk = substr($key, $index * 4, 4);
-            $subkeys[] = unpack('N', $chunk)[1] & self::MASK_32;
+            $original_int = unpack('N', $chunk)[1] & self::MASK_32;
+
+            $subkeys[] = $this->reverse32Bit($original_int) & self::MASK_32;
         }
 
         return $subkeys;
@@ -213,6 +245,7 @@ class GostService
     private function processBlock(string $block, array $roundKeys, string $direction): array
     {
         $parts = unpack('Nleft/Nright', $block);
+
         $left = $parts['left'] & self::MASK_32;
         $right = $parts['right'] & self::MASK_32;
         $rounds = [];
@@ -220,8 +253,13 @@ class GostService
         foreach ($roundKeys as $index => $roundKey) {
             $roundNumber = $index + 1;
             $fValue = $this->roundFunction($right, $roundKey['value']);
-            $newLeft = $right;
-            $newRight = ($left ^ $fValue) & self::MASK_32;
+            if ($roundNumber == 32) {
+                $newLeft = $left ^ $fValue & self::MASK_32;
+                $newRight = $right;
+            } else {
+                $newLeft = $right;
+                $newRight = ($left ^ $fValue) & self::MASK_32;
+            }
 
             $rounds[] = [
                 'round' => $roundNumber,
@@ -237,6 +275,8 @@ class GostService
             $right = $newRight;
         }
 
+        $left = $this->reverse32Bit($left);
+        $right = $this->reverse32Bit($right);
         return [
             'block' => pack('N2', $right, $left),
             'rounds' => $rounds,
@@ -253,16 +293,23 @@ class GostService
 
     private function substitute(int $value): int
     {
+        $value &= self::MASK_32;
         $output = 0;
 
-        for ($index = 0; $index < 8; $index++) {
-            $nibble = ($value >> ($index * 4)) & 0xF;
-            $output |= self::SBOX[$index][$nibble] << ($index * 4);
+        for ($i = 0; $i < 8; $i++) {
+
+            // MSB-first
+            $shift = (7 - $i) * 4;
+
+            $nibble = ($value >> $shift) & 0xF;
+
+            $sboxValue = self::SBOX[$i][$nibble];
+
+            $output |= ($sboxValue << $shift);
         }
 
         return $output & self::MASK_32;
     }
-
     private function rotateLeft32(int $value, int $shift): int
     {
         $value &= self::MASK_32;
