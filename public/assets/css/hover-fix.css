@@ -1,0 +1,72 @@
+/*
+ * hover-fix.css
+ * Override untuk efek hover card yang terlalu agresif.
+ * File ini dimuat SETELAH dashboard-animations.css sehingga
+ * nilai di sini selalu menang tanpa perlu !important berlebihan.
+ */
+
+.cyber-motion-card {
+    transform: translate3d(0, 0, 0) perspective(1200px)
+        rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
+    transition:
+        transform 280ms ease-out,
+        border-color 240ms ease,
+        background 240ms ease;
+}
+
+/* Active state — ringan */
+.cyber-motion-card.is-card-active {
+    border-color: rgba(124, 255, 178, 0.52);
+    transform: translate3d(0, -3px, 0) perspective(1200px)
+        rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg))
+        scale(1.004);
+}
+
+/* Panel besar — flat, no tilt */
+.algorithm-form-panel.cyber-motion-card,
+.algorithm-output-panel.cyber-motion-card,
+.algorithm-game-panel.cyber-motion-card,
+.hash-form-panel.cyber-motion-card,
+.hash-output-panel.cyber-motion-card,
+.hash-game-panel.cyber-motion-card,
+.rsa-form-panel.cyber-motion-card {
+    transform-style: flat;
+    transform: translate3d(0, 0, 0) !important;
+}
+
+.algorithm-form-panel.cyber-motion-card.is-card-active,
+.algorithm-output-panel.cyber-motion-card.is-card-active,
+.algorithm-game-panel.cyber-motion-card.is-card-active,
+.hash-form-panel.cyber-motion-card.is-card-active,
+.hash-output-panel.cyber-motion-card.is-card-active,
+.hash-game-panel.cyber-motion-card.is-card-active,
+.rsa-form-panel.cyber-motion-card.is-card-active {
+    transform: translate3d(0, -2px, 0) scale(1.002) !important;
+}
+
+/* Card dalam tabel — selalu flat */
+.table-responsive .cyber-motion-card,
+.comparison-wrap .cyber-motion-card,
+.member-table-wrap .cyber-motion-card,
+.glossary-wrap .cyber-motion-card,
+table .cyber-motion-card {
+    transform: none !important;
+    transition: border-color 220ms ease !important;
+}
+
+/* Touch / non-pointer device — matikan tilt */
+@media not all and (hover: hover) and (pointer: fine) {
+    .cyber-motion-card,
+    .cyber-motion-card.is-card-active {
+        transform: translate3d(0, 0, 0) !important;
+    }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .cyber-motion-card,
+    .cyber-motion-card.is-card-active {
+        transform: translate3d(0, 0, 0) !important;
+        transition: border-color 220ms ease !important;
+    }
+}
