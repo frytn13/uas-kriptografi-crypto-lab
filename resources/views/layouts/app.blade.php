@@ -6,8 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Crypto Lab')</title>
     <meta name="description" content="Website pembelajaran algoritma kriptografi Hash, RSA, DES, dan GOST.">
-    <link rel="stylesheet" href="{{ asset('assets/css/app.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/dashboard-animations.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/app.css') }}?v={{ filemtime(public_path('assets/css/app.css')) }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/dashboard-animations.css') }}?v={{ filemtime(public_path('assets/css/dashboard-animations.css')) }}">
 </head>
 
 <body>
@@ -142,7 +142,7 @@
         <span aria-hidden="true">↑</span>
     </button>
 
-    <script src="{{ asset('assets/js/app.js') }}"></script>
+    <script src="{{ asset('assets/js/app.js') }}?v={{ filemtime(public_path('assets/js/app.js')) }}"></script>
 </body>
 
 </html>
