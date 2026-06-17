@@ -8,6 +8,7 @@
     <meta name="description" content="Website pembelajaran algoritma kriptografi Hash, RSA, DES, dan GOST.">
     <link rel="stylesheet" href="{{ asset('assets/css/app.css') }}?v={{ filemtime(public_path('assets/css/app.css')) }}">
     <link rel="stylesheet" href="{{ asset('assets/css/dashboard-animations.css') }}?v={{ filemtime(public_path('assets/css/dashboard-animations.css')) }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/hover-fix.css') }}?v={{ filemtime(public_path('assets/css/hover-fix.css')) }}">
 </head>
 
 <body>
@@ -143,6 +144,7 @@
     </button>
 
     <script src="{{ asset('assets/js/app.js') }}?v={{ filemtime(public_path('assets/js/app.js')) }}"></script>
+    <script src="{{ asset('assets/js/hover-fix.js') }}?v={{ filemtime(public_path('assets/js/hover-fix.js')) }}"></script>
 </body>
 
 </html>
