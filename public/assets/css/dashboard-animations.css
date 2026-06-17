@@ -686,8 +686,21 @@ section,
     --tilt-y: 0deg;
     --pointer-x: 50%;
     --pointer-y: 50%;
-    transform: translate3d(0, 0, 0) perspective(1000px) rotateX(var(--tilt-x))
+    transform: translate3d(0, 0, 0) perspective(1200px) rotateX(var(--tilt-x))
         rotateY(var(--tilt-y));
+    transition:
+        transform 280ms ease-out,
+        border-color 220ms ease,
+        background 220ms ease;
+}
+
+/* Tilt aktif hanya untuk perangkat dengan pointer presisi (desktop/laptop) */
+@media not all and (hover: hover) and (pointer: fine) {
+    .cyber-motion-card,
+    .cyber-motion-card.is-card-active {
+        transform: translate3d(0, 0, 0) !important;
+        transition: border-color 220ms ease, background 220ms ease;
+    }
 }
 
 .cyber-motion-card.is-card-active {
@@ -706,8 +719,8 @@ section,
             transparent 38%
         ),
         rgba(0, 0, 0, 0.48);
-    transform: translate3d(0, -8px, 0) perspective(1000px)
-        rotateX(var(--tilt-x)) rotateY(var(--tilt-y)) scale(1.012);
+    transform: translate3d(0, -3px, 0) perspective(1200px)
+        rotateX(var(--tilt-x)) rotateY(var(--tilt-y)) scale(1.004);
 }
 
 .cyber-motion-card.is-card-active::before {
@@ -722,6 +735,32 @@ section,
 .cyber-motion-card > * {
     position: relative;
     z-index: 2;
+}
+
+/* ── Panel besar: NO tilt, hanya glow + translateY ringan ─── */
+.algorithm-form-panel.cyber-motion-card,
+.algorithm-output-panel.cyber-motion-card,
+.algorithm-game-panel.cyber-motion-card,
+.hash-form-panel.cyber-motion-card,
+.hash-output-panel.cyber-motion-card,
+.hash-game-panel.cyber-motion-card,
+.rsa-form-panel.cyber-motion-card {
+    transform-style: flat;
+    transform: translate3d(0, 0, 0);
+    transition:
+        transform 260ms ease,
+        border-color 260ms ease,
+        background 260ms ease;
+}
+
+.algorithm-form-panel.cyber-motion-card.is-card-active,
+.algorithm-output-panel.cyber-motion-card.is-card-active,
+.algorithm-game-panel.cyber-motion-card.is-card-active,
+.hash-form-panel.cyber-motion-card.is-card-active,
+.hash-output-panel.cyber-motion-card.is-card-active,
+.hash-game-panel.cyber-motion-card.is-card-active,
+.rsa-form-panel.cyber-motion-card.is-card-active {
+    transform: translate3d(0, -2px, 0) scale(1.002);
 }
 
 .data-row,
@@ -2052,5 +2091,99 @@ table .cyber-motion-card {
 
     .about-page .team-profile-hover-note {
         display: none;
+    }
+}
+
+
+/* ==========================================================
+   HOVER CARD CONSOLIDATION — final override, append-only
+   Menggantikan semua konflik nilai tilt/scale/translate
+   di atas. Blok ini harus selalu berada di paling bawah.
+   ========================================================== */
+
+/* 1. Base state — transition smooth, tidak ada residual tilt */
+.cyber-motion-card {
+    --tilt-x: 0deg;
+    --tilt-y: 0deg;
+    --pointer-x: 50%;
+    --pointer-y: 50%;
+    transform: translate3d(0, 0, 0) perspective(1200px)
+        rotateX(var(--tilt-x)) rotateY(var(--tilt-y));
+    transition:
+        transform 280ms ease-out,
+        border-color 240ms ease,
+        box-shadow 240ms ease;
+    will-change: transform;
+}
+
+/* 2. Active state untuk SEMUA card — nilai ringan */
+.cyber-motion-card.is-card-active {
+    border-color: rgba(124, 255, 178, 0.52);
+    transform: translate3d(0, -3px, 0) perspective(1200px)
+        rotateX(var(--tilt-x)) rotateY(var(--tilt-y)) scale(1.004);
+}
+
+/* 3. Panel besar — flat, NO tilt, hanya translateY minimal */
+.algorithm-form-panel.cyber-motion-card,
+.algorithm-output-panel.cyber-motion-card,
+.algorithm-game-panel.cyber-motion-card,
+.hash-form-panel.cyber-motion-card,
+.hash-output-panel.cyber-motion-card,
+.hash-game-panel.cyber-motion-card,
+.rsa-form-panel.cyber-motion-card {
+    transform-style: flat;
+    transform: translate3d(0, 0, 0);
+    transition:
+        transform 280ms ease-out,
+        border-color 240ms ease;
+}
+
+.algorithm-form-panel.cyber-motion-card.is-card-active,
+.algorithm-output-panel.cyber-motion-card.is-card-active,
+.algorithm-game-panel.cyber-motion-card.is-card-active,
+.hash-form-panel.cyber-motion-card.is-card-active,
+.hash-output-panel.cyber-motion-card.is-card-active,
+.hash-game-panel.cyber-motion-card.is-card-active,
+.rsa-form-panel.cyber-motion-card.is-card-active {
+    transform: translate3d(0, -2px, 0) scale(1.002);
+}
+
+/* 4. Card di dalam tabel / scroll wrapper — selalu flat */
+.table-responsive .cyber-motion-card,
+.comparison-wrap .cyber-motion-card,
+.member-table-wrap .cyber-motion-card,
+.glossary-wrap .cyber-motion-card,
+table .cyber-motion-card {
+    transform: none !important;
+    transition: border-color 220ms ease !important;
+}
+
+/* 5. Non-pointer devices (touch/mobile) — matikan semua tilt */
+@media not all and (hover: hover) and (pointer: fine) {
+    .cyber-motion-card,
+    .cyber-motion-card.is-card-active {
+        transform: translate3d(0, 0, 0) !important;
+    }
+
+    .algorithm-form-panel.cyber-motion-card.is-card-active,
+    .algorithm-output-panel.cyber-motion-card.is-card-active,
+    .algorithm-game-panel.cyber-motion-card.is-card-active,
+    .hash-form-panel.cyber-motion-card.is-card-active,
+    .hash-output-panel.cyber-motion-card.is-card-active,
+    .hash-game-panel.cyber-motion-card.is-card-active,
+    .rsa-form-panel.cyber-motion-card.is-card-active {
+        transform: translate3d(0, 0, 0) !important;
+    }
+}
+
+/* 6. Reduced motion — matikan semua animasi tilt */
+@media (prefers-reduced-motion: reduce) {
+    .cyber-motion-card,
+    .cyber-motion-card.is-card-active,
+    .algorithm-form-panel.cyber-motion-card.is-card-active,
+    .algorithm-output-panel.cyber-motion-card.is-card-active,
+    .algorithm-game-panel.cyber-motion-card.is-card-active {
+        transform: translate3d(0, 0, 0) !important;
+        transition: border-color 220ms ease !important;
     }
 }

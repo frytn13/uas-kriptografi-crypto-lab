@@ -244,29 +244,33 @@ class CryptoPageController extends Controller
             'key' => ['required', 'string', 'size:8'],
         ], [
             'plaintext.required' => 'Plaintext wajib diisi.',
-            'plaintext.max' => 'Plaintext maksimal 8 karakter untuk satu blok DES 64-bit.',
+            'plaintext.max' => 'Plaintext maksimal 8 karakter untuk satu blok DES.',
             'key.required' => 'Key DES wajib diisi.',
-            'key.size' => 'Key DES wajib tepat 8 karakter agar menjadi 64-bit.',
+            'key.size' => 'Key DES wajib tepat 8 karakter.',
         ]);
 
-        return $desService->encryptText($validated['plaintext'], $validated['key']);
+        return $desService->encryptText(
+            $validated['plaintext'],
+            $validated['key']
+        );
     }
-
 
     private function processDesDecrypt(Request $request, DesService $desService): array
     {
         $validated = $request->validate([
-            'ciphertext_binary' => ['required', 'string', 'size:64', 'regex:/^[01]+$/'],
+            'ciphertext_binary' => ['required', 'string', 'regex:/^[01]{64}$/'],
             'key' => ['required', 'string', 'size:8'],
         ], [
-            'ciphertext_binary.required' => 'Ciphertext biner wajib diisi.',
-            'ciphertext_binary.size' => 'Ciphertext DES wajib tepat 64 bit.',
-            'ciphertext_binary.regex' => 'Ciphertext biner hanya boleh berisi angka 0 dan 1.',
+            'ciphertext_binary.required' => 'Ciphertext binary wajib diisi.',
+            'ciphertext_binary.regex' => 'Ciphertext binary wajib tepat 64 bit (hanya karakter 0 dan 1).',
             'key.required' => 'Key DES wajib diisi.',
-            'key.size' => 'Key DES wajib tepat 8 karakter agar menjadi 64-bit.',
+            'key.size' => 'Key DES wajib tepat 8 karakter.',
         ]);
 
-        return $desService->decryptText($validated['ciphertext_binary'], $validated['key']);
+        return $desService->decryptText(
+            $validated['ciphertext_binary'],
+            $validated['key']
+        );
     }
 
     private function processGostEncrypt(Request $request, GostService $gostService): array
