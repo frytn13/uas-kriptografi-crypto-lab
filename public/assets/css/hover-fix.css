@@ -5,6 +5,12 @@
  * nilai di sini selalu menang tanpa perlu !important berlebihan.
  */
 
+/* ── Reset transform-style agar child tidak ikut miring ── */
+.cyber-motion-card,
+.cyber-motion-card * {
+    transform-style: flat !important;
+}
+
 .cyber-motion-card {
     transform: translate3d(0, 0, 0) perspective(1200px)
         rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
@@ -22,7 +28,18 @@
         scale(1.004);
 }
 
-/* Panel besar — flat, no tilt */
+/* Panel besar — flat, no tilt, no 3d */
+.algorithm-form-panel,
+.algorithm-output-panel,
+.algorithm-game-panel,
+.hash-form-panel,
+.hash-output-panel,
+.hash-game-panel,
+.rsa-form-panel {
+    transform-style: flat !important;
+    perspective: none !important;
+}
+
 .algorithm-form-panel.cyber-motion-card,
 .algorithm-output-panel.cyber-motion-card,
 .algorithm-game-panel.cyber-motion-card,
@@ -30,8 +47,8 @@
 .hash-output-panel.cyber-motion-card,
 .hash-game-panel.cyber-motion-card,
 .rsa-form-panel.cyber-motion-card {
-    transform-style: flat;
     transform: translate3d(0, 0, 0) !important;
+    perspective: none !important;
 }
 
 .algorithm-form-panel.cyber-motion-card.is-card-active,
@@ -41,7 +58,16 @@
 .hash-output-panel.cyber-motion-card.is-card-active,
 .hash-game-panel.cyber-motion-card.is-card-active,
 .rsa-form-panel.cyber-motion-card.is-card-active {
-    transform: translate3d(0, -2px, 0) scale(1.002) !important;
+    transform: translate3d(0, -2px, 0) !important;
+    perspective: none !important;
+}
+
+/* Area output DES yang di-inject dinamis — selalu flat */
+[data-des-result-area],
+[data-des-result-area] * {
+    transform: none !important;
+    transform-style: flat !important;
+    perspective: none !important;
 }
 
 /* Card dalam tabel — selalu flat */
