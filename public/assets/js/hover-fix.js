@@ -1,18 +1,14 @@
 /**
  * hover-fix.js
- * Patch initCyberCards() agar tilt ringan dan panel besar stabil.
- * Dimuat SETELAH app.js — mendaftarkan ulang event listener
- * dengan nilai yang sudah diperbaiki di semua card yang ada.
+ * 1. Patch initCyberCards() agar tilt ringan dan panel besar stabil.
+ * 2. Reset transform pada panel output DES agar tidak ikut miring.
  */
 (function () {
     'use strict';
 
-    // Hanya aktif di perangkat dengan pointer presisi (mouse/trackpad)
     var hasFinePointer = window.matchMedia(
         '(hover: hover) and (pointer: fine)'
     ).matches;
-
-    if (!hasFinePointer) return;
 
     var STABLE_SELECTORS = [
         '.algorithm-output-panel',
@@ -24,97 +20,126 @@
         '.rsa-form-panel',
     ].join(',');
 
+    /* ── 1. Flatten semua elemen di dalam panel besar ─────── */
+    function flattenPanel(el) {
+        el.style.setProperty('transform', 'none', 'important');
+        el.style.setProperty('transform-style', 'flat', 'important');
+        el.style.setProperty('perspective', 'none', 'important');
+    }
+
+    function flattenResultArea() {
+        var area = document.querySelector('[data-des-result-area]');
+        if (!area) return;
+        /* Flatten area itu sendiri dan semua descendant */
+        flattenPanel(area);
+        area.querySelectorAll('*').forEach(flattenPanel);
+    }
+
+    /* Jalankan setelah setiap kemungkinan inject hasil DES */
+    function watchResultArea() {
+        var area = document.querySelector('[data-des-result-area]');
+        if (!area) return;
+
+        /* Langsung flatten kalau sudah ada isi */
+        flattenResultArea();
+
+        /* Observe mutation untuk inject berikutnya */
+        var obs = new MutationObserver(function () {
+            flattenResultArea();
+        });
+        obs.observe(area, { childList: true, subtree: true });
+    }
+
+    /* ── 2. Patch card hover — tilt ringan ───────────────── */
     function patchCard(card) {
-        // Tandai agar tidak di-patch dua kali
         if (card.dataset.hoverFixApplied === 'true') return;
         card.dataset.hoverFixApplied = 'true';
 
         var isStable = card.matches(STABLE_SELECTORS);
-        var MAX_TILT = isStable ? 0 : 1.0; // deg
+        var MAX_TILT = isStable ? 0 : 1.0;
 
-        var targetX = 0, targetY = 0;
-        var currentX = 0, currentY = 0;
-        var targetPX = 50, targetPY = 50;
-        var currentPX = 50, currentPY = 50;
-        var active = false;
-        var raf = null;
+        /* Panel besar: reset transform-style sekarang */
+        if (isStable) {
+            card.style.setProperty('transform-style', 'flat', 'important');
+            card.style.setProperty('perspective', 'none', 'important');
+        }
+
+        if (!hasFinePointer) return;
+
+        var tX = 0, tY = 0, cX = 0, cY = 0;
+        var tPX = 50, tPY = 50, cPX = 50, cPY = 50;
+        var active = false, raf = null;
 
         function tick() {
             raf = null;
-            currentX += (targetX - currentX) * 0.10;
-            currentY += (targetY - currentY) * 0.10;
-            currentPX += (targetPX - currentPX) * 0.12;
-            currentPY += (targetPY - currentPY) * 0.12;
+            cX += (tX - cX) * 0.10;
+            cY += (tY - cY) * 0.10;
+            cPX += (tPX - cPX) * 0.12;
+            cPY += (tPY - cPY) * 0.12;
 
-            card.style.setProperty('--tilt-x', currentX.toFixed(3) + 'deg');
-            card.style.setProperty('--tilt-y', currentY.toFixed(3) + 'deg');
-            card.style.setProperty('--pointer-x', currentPX.toFixed(2) + '%');
-            card.style.setProperty('--pointer-y', currentPY.toFixed(2) + '%');
+            card.style.setProperty('--tilt-x', cX.toFixed(3) + 'deg');
+            card.style.setProperty('--tilt-y', cY.toFixed(3) + 'deg');
+            card.style.setProperty('--pointer-x', cPX.toFixed(2) + '%');
+            card.style.setProperty('--pointer-y', cPY.toFixed(2) + '%');
 
-            var moving =
-                Math.abs(targetX - currentX) > 0.01 ||
-                Math.abs(targetY - currentY) > 0.01 ||
-                Math.abs(targetPX - currentPX) > 0.05 ||
-                Math.abs(targetPY - currentPY) > 0.05;
-
-            if (active || moving) {
+            if (active ||
+                Math.abs(tX - cX) > 0.01 || Math.abs(tY - cY) > 0.01 ||
+                Math.abs(tPX - cPX) > 0.05 || Math.abs(tPY - cPY) > 0.05) {
                 raf = requestAnimationFrame(tick);
             }
         }
 
-        function request() {
-            if (raf === null) raf = requestAnimationFrame(tick);
-        }
+        function req() { if (!raf) raf = requestAnimationFrame(tick); }
 
-        // Override event listeners dengan cloneNode trick —
-        // hapus semua listener lama sekaligus
+        /* Clone untuk buang listener lama dari app.js */
         var fresh = card.cloneNode(true);
-        // Pertahankan dataset yang sudah ada
         fresh.dataset.hoverFixApplied = 'true';
         fresh.dataset.cyberCardReady = 'true';
+        if (isStable) {
+            fresh.style.setProperty('transform-style', 'flat', 'important');
+            fresh.style.setProperty('perspective', 'none', 'important');
+        }
         card.parentNode.replaceChild(fresh, card);
         card = fresh;
 
         card.addEventListener('pointerenter', function () {
+            if (!hasFinePointer) return;
             active = true;
             card.classList.add('is-card-active');
-            request();
+            req();
         });
 
         card.addEventListener('pointermove', function (e) {
-            var rect = card.getBoundingClientRect();
-            var px = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-            var py = Math.max(0, Math.min(1, (e.clientY - rect.top) / rect.height));
-
-            targetX = (0.5 - py) * (MAX_TILT * 2);
-            targetY = (px - 0.5) * (MAX_TILT * 2);
-            targetPX = px * 100;
-            targetPY = py * 100;
-            request();
+            if (!hasFinePointer) return;
+            var r = card.getBoundingClientRect();
+            var px = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width));
+            var py = Math.max(0, Math.min(1, (e.clientY - r.top) / r.height));
+            tX = (0.5 - py) * (MAX_TILT * 2);
+            tY = (px - 0.5) * (MAX_TILT * 2);
+            tPX = px * 100;
+            tPY = py * 100;
+            req();
         });
 
         card.addEventListener('pointerleave', function () {
+            if (!hasFinePointer) return;
             active = false;
-            targetX = 0; targetY = 0;
-            targetPX = 50; targetPY = 50;
+            tX = 0; tY = 0; tPX = 50; tPY = 50;
             card.classList.remove('is-card-active');
-            request();
+            req();
         });
     }
 
     function patchAll() {
-        var cards = document.querySelectorAll('.cyber-motion-card');
-        cards.forEach(patchCard);
+        document.querySelectorAll('.cyber-motion-card').forEach(patchCard);
+        watchResultArea();
     }
 
-    // Jalankan setelah DOM siap
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', patchAll);
     } else {
         patchAll();
     }
 
-    // Expose untuk dipanggil ulang jika card di-inject secara dinamis
-    // (misal setelah renderDesResult())
     window.applyHoverFix = patchAll;
 }());
