@@ -329,12 +329,429 @@
             min-height: 92px;
         }
     }
+
+    /* ── Binary output scoped styles ─────────────────────────── */
+
+    .des-field-hint {
+        display: block;
+        margin-top: 4px;
+        color: var(--color-muted);
+        font-family: var(--font-mono);
+        font-size: 11px;
+        letter-spacing: 1px;
+        line-height: 1.5;
+    }
+
+    .des-bin-section {
+        margin-top: var(--space-xl);
+        padding-top: var(--space-xl);
+        border-top: 1px solid var(--color-hairline);
+    }
+
+    .des-bin-section-title {
+        margin: 0 0 var(--space-lg);
+        color: var(--color-muted);
+        font-family: var(--font-mono);
+        font-size: 11px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+    }
+
+    .des-bin-row {
+        display: grid;
+        grid-template-columns: minmax(180px, 0.55fr) minmax(0, 1fr);
+        gap: var(--space-md);
+        padding: var(--space-md) 0;
+        border-bottom: 1px solid var(--color-hairline);
+        align-items: start;
+    }
+
+    .des-bin-row:last-child {
+        border-bottom: none;
+    }
+
+    .des-bin-label {
+        color: var(--color-muted);
+        font-family: var(--font-mono);
+        font-size: 11px;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        padding-top: 2px;
+    }
+
+    .des-bin-value {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        align-items: flex-start;
+    }
+
+    .des-bin-group {
+        display: inline-block;
+        color: var(--color-link);
+        font-family: var(--font-mono);
+        font-size: 12px;
+        line-height: 1.6;
+        letter-spacing: 1px;
+        background: rgba(195, 217, 243, 0.06);
+        border: 1px solid rgba(195, 217, 243, 0.12);
+        padding: 1px 4px;
+        border-radius: 3px;
+    }
+
+    .des-bin-group--highlight {
+        color: var(--color-cyber);
+        background: rgba(124, 255, 178, 0.07);
+        border-color: rgba(124, 255, 178, 0.18);
+    }
+
+    /* Key schedule table */
+    .des-key-table-wrap {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+        scrollbar-color: var(--color-hairline-strong) transparent;
+        margin-top: var(--space-lg);
+    }
+
+    .des-key-table {
+        width: 100%;
+        min-width: 900px;
+        border-collapse: collapse;
+        font-family: var(--font-mono);
+        font-size: 11px;
+    }
+
+    .des-key-table th {
+        padding: var(--space-sm) var(--space-md);
+        border-bottom: 1px solid var(--color-hairline-strong);
+        border-right: 1px solid var(--color-hairline);
+        color: var(--color-muted);
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        text-align: left;
+        white-space: nowrap;
+        background: rgba(255,255,255,0.02);
+    }
+
+    .des-key-table td {
+        padding: var(--space-sm) var(--space-md);
+        border-bottom: 1px solid var(--color-hairline);
+        border-right: 1px solid var(--color-hairline);
+        vertical-align: top;
+        line-height: 1.6;
+    }
+
+    .des-key-table td:first-child {
+        color: var(--color-primary);
+        white-space: nowrap;
+        font-weight: 600;
+        width: 60px;
+    }
+
+    .des-key-table td:nth-child(2) {
+        color: var(--color-muted);
+        width: 50px;
+        text-align: center;
+    }
+
+    .des-key-table td:nth-child(3),
+    .des-key-table td:nth-child(4),
+    .des-key-table td:nth-child(5) {
+        color: var(--color-link);
+        overflow-wrap: anywhere;
+        word-break: break-all;
+    }
+
+    .des-key-table td:nth-child(5) {
+        color: var(--color-cyber);
+    }
+
+    /* Round detail collapsible */
+    .des-detail-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: var(--space-lg);
+        margin-top: var(--space-xl);
+    }
+
+    .des-detail-card {
+        border: 1px solid var(--color-hairline);
+        background: transparent;
+    }
+
+    .des-detail-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: var(--space-md) var(--space-lg);
+        cursor: pointer;
+        user-select: none;
+        border-bottom: 1px solid transparent;
+        transition: border-color 180ms ease, background 180ms ease;
+    }
+
+    .des-detail-header:hover {
+        background: rgba(255,255,255,0.03);
+    }
+
+    .des-detail-card.is-open .des-detail-header {
+        border-bottom-color: var(--color-hairline);
+    }
+
+    .des-detail-header-left {
+        display: flex;
+        align-items: baseline;
+        gap: var(--space-sm);
+    }
+
+    .des-detail-round-num {
+        color: var(--color-primary);
+        font-family: var(--font-display);
+        font-size: 20px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    }
+
+    .des-detail-round-sub {
+        color: var(--color-muted);
+        font-family: var(--font-mono);
+        font-size: 11px;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+    }
+
+    .des-detail-toggle {
+        color: var(--color-muted);
+        font-family: var(--font-mono);
+        font-size: 11px;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        transition: color 180ms ease;
+        white-space: nowrap;
+    }
+
+    .des-detail-header:hover .des-detail-toggle {
+        color: var(--color-primary);
+    }
+
+    .des-detail-body {
+        display: none;
+        padding: var(--space-lg);
+    }
+
+    .des-detail-card.is-open .des-detail-body {
+        display: block;
+    }
+
+    .des-detail-row {
+        display: grid;
+        grid-template-columns: minmax(140px, 0.5fr) minmax(0, 1fr);
+        gap: var(--space-sm);
+        padding: var(--space-sm) 0;
+        border-bottom: 1px solid var(--color-hairline);
+        align-items: start;
+    }
+
+    .des-detail-row:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+
+    .des-detail-row-label {
+        color: var(--color-muted);
+        font-family: var(--font-mono);
+        font-size: 10px;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        padding-top: 2px;
+    }
+
+    .des-detail-row-value {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 3px;
+    }
+
+    @media (max-width: 900px) {
+        .des-detail-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .des-bin-row {
+            grid-template-columns: 1fr;
+            gap: var(--space-xs);
+        }
+    }
+
+    /* ── Formula section scoped styles ──────────────────────── */
+
+    .des-formula-card {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-md);
+    }
+
+    .des-formula-desc {
+        margin: 0;
+        color: var(--color-body);
+        font-size: 15px;
+        line-height: 1.75;
+    }
+
+    .des-formula-symbols {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        border-top: 1px solid var(--color-hairline);
+        padding-top: var(--space-md);
+        margin-top: auto;
+    }
+
+    .des-formula-symbols li {
+        display: flex;
+        align-items: baseline;
+        gap: var(--space-sm);
+        color: var(--color-body);
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+    .des-formula-symbols li code {
+        flex-shrink: 0;
+        min-width: 72px;
+        color: var(--color-cyber);
+        font-family: var(--font-mono);
+        font-size: 12px;
+        letter-spacing: 0.5px;
+    }
+
+    /* Keterangan Simbol */
+    .des-formula-legend {
+        margin-top: var(--space-xxl);
+        padding-top: var(--space-xl);
+        border-top: 1px solid var(--color-hairline);
+    }
+
+    .des-formula-legend-title {
+        margin: 0 0 var(--space-lg);
+        color: var(--color-muted);
+        font-family: var(--font-mono);
+        font-size: 11px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+    }
+
+    .des-formula-legend-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0;
+        border-top: 1px solid var(--color-hairline);
+        border-left: 1px solid var(--color-hairline);
+    }
+
+    .des-symbol-row {
+        display: grid;
+        grid-template-columns: minmax(80px, 0.28fr) minmax(0, 1fr);
+        gap: var(--space-md);
+        padding: var(--space-md) var(--space-lg);
+        border-right: 1px solid var(--color-hairline);
+        border-bottom: 1px solid var(--color-hairline);
+        align-items: baseline;
+    }
+
+    .des-symbol-row code {
+        color: var(--color-cyber);
+        font-family: var(--font-mono);
+        font-size: 13px;
+        letter-spacing: 0.5px;
+        white-space: nowrap;
+    }
+
+    .des-symbol-row span {
+        color: var(--color-body);
+        font-size: 14px;
+        line-height: 1.55;
+    }
+
+    /* Alur Singkat Operasi Round */
+    .des-round-flow-wrap {
+        margin-top: var(--space-xxl);
+        padding-top: var(--space-xl);
+        border-top: 1px solid var(--color-hairline);
+    }
+
+    .des-round-flow-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: var(--space-lg);
+        margin-top: var(--space-lg);
+    }
+
+    .des-round-flow-step {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-md);
+        padding: var(--space-lg);
+        border: 1px solid var(--color-hairline);
+    }
+
+    .des-round-flow-num {
+        display: block;
+        color: var(--color-cyber);
+        font-family: var(--font-mono);
+        font-size: 11px;
+        letter-spacing: 2px;
+    }
+
+    .des-round-flow-step strong {
+        display: block;
+        color: var(--color-primary);
+        font-family: var(--font-display);
+        font-size: 18px;
+        font-weight: 400;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    }
+
+    .des-round-flow-step p {
+        margin: 0;
+        color: var(--color-body);
+        font-size: 14px;
+        line-height: 1.7;
+    }
+
+    @media (max-width: 1080px) {
+        .des-formula-legend-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .des-round-flow-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @media (max-width: 640px) {
+        .des-round-flow-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .des-symbol-row {
+            grid-template-columns: minmax(70px, 0.32fr) minmax(0, 1fr);
+            gap: var(--space-sm);
+            padding: var(--space-sm) var(--space-md);
+        }
+    }
 </style>
 
 @php
     $encryptPlaintext = old('plaintext', $desResult['plaintext'] ?? 'SURABAYA');
     $encryptKey = old('key', $desResult['key'] ?? 'UKMC2026');
-    $decryptCiphertext = old('ciphertext_hex', $desResult['ciphertext_hex'] ?? '');
+    $decryptCiphertextBinary = old('ciphertext_binary', $desResult['ciphertext_binary'] ?? '');
 @endphp
 
 <div class="des-page">
@@ -571,24 +988,107 @@
         </div>
 
         <div class="algorithm-grid-3">
-            <article class="formula-card">
+
+            {{-- Formula 01 — Feistel Left --}}
+            <article class="formula-card des-formula-card">
                 <span>Formula 01</span>
                 <h3>FEISTEL LEFT</h3>
                 <code class="algorithm-code-output">Lᵢ = Rᵢ₋₁</code>
+                <p class="des-formula-desc">
+                    Pada setiap round DES, bagian kiri baru (Lᵢ) diambil langsung dari bagian kanan pada round sebelumnya (Rᵢ₋₁). Proses ini menunjukkan pola pertukaran pada jaringan Feistel, sehingga data kanan sebelumnya menjadi data kiri untuk round berikutnya.
+                </p>
+                <ul class="des-formula-symbols">
+                    <li><code>Lᵢ</code> — blok kiri pada round ke-i (32 bit)</li>
+                    <li><code>Rᵢ₋₁</code> — blok kanan dari round sebelumnya</li>
+                </ul>
             </article>
 
-            <article class="formula-card">
+            {{-- Formula 02 — Feistel Right --}}
+            <article class="formula-card des-formula-card">
                 <span>Formula 02</span>
                 <h3>FEISTEL RIGHT</h3>
                 <code class="algorithm-code-output">Rᵢ = Lᵢ₋₁ XOR F(Rᵢ₋₁, Kᵢ)</code>
+                <p class="des-formula-desc">
+                    Bagian kanan baru (Rᵢ) dihitung dengan melakukan operasi XOR antara Lᵢ₋₁ dan hasil fungsi F. Fungsi F memproses Rᵢ₋₁ menggunakan subkey Kᵢ. Karena setiap round memakai subkey berbeda, hasil perubahan data pada setiap round juga berbeda.
+                </p>
+                <ul class="des-formula-symbols">
+                    <li><code>Rᵢ</code> — blok kanan pada round ke-i (32 bit)</li>
+                    <li><code>Lᵢ₋₁</code> — blok kiri dari round sebelumnya</li>
+                    <li><code>Kᵢ</code> — subkey DES pada round ke-i (48 bit)</li>
+                    <li><code>XOR</code> — operasi biner, hasilkan 1 jika bit berbeda</li>
+                </ul>
             </article>
 
-            <article class="formula-card">
+            {{-- Formula 03 — Round Function --}}
+            <article class="formula-card des-formula-card">
                 <span>Formula 03</span>
                 <h3>ROUND FUNCTION</h3>
                 <code class="algorithm-code-output">F(R, K) = P(S(E(R) XOR K))</code>
+                <p class="des-formula-desc">
+                    Fungsi F dimulai dengan ekspansi E(R), yaitu memperluas blok kanan dari 32 bit menjadi 48 bit. Hasil ekspansi di-XOR dengan subkey K. Setelah itu, S-Box mengubah 48 bit menjadi 32 bit. Hasilnya diproses oleh P-Box sebelum digunakan pada perhitungan Rᵢ.
+                </p>
+                <ul class="des-formula-symbols">
+                    <li><code>E(R)</code> — ekspansi 32 bit → 48 bit</li>
+                    <li><code>S</code> — S-Box, 48 bit → 32 bit</li>
+                    <li><code>P</code> — P-Box, permutasi posisi bit</li>
+                    <li><code>K</code> — subkey 48 bit pada round ke-i</li>
+                </ul>
             </article>
+
         </div>
+
+        {{-- Keterangan Simbol --}}
+        <div class="des-formula-legend">
+            <p class="des-formula-legend-title">KETERANGAN SIMBOL</p>
+            <div class="des-formula-legend-grid">
+                <div class="des-symbol-row"><code>i</code><span>Nomor round, dari 1 sampai 16</span></div>
+                <div class="des-symbol-row"><code>Lᵢ</code><span>Blok kiri pada round ke-i — 32 bit</span></div>
+                <div class="des-symbol-row"><code>Rᵢ</code><span>Blok kanan pada round ke-i — 32 bit</span></div>
+                <div class="des-symbol-row"><code>Lᵢ₋₁</code><span>Blok kiri dari round sebelumnya</span></div>
+                <div class="des-symbol-row"><code>Rᵢ₋₁</code><span>Blok kanan dari round sebelumnya</span></div>
+                <div class="des-symbol-row"><code>Kᵢ</code><span>Subkey DES pada round ke-i — 48 bit</span></div>
+                <div class="des-symbol-row"><code>E(R)</code><span>Ekspansi blok kanan dari 32 bit menjadi 48 bit</span></div>
+                <div class="des-symbol-row"><code>S</code><span>Proses S-Box — mengubah 48 bit menjadi 32 bit</span></div>
+                <div class="des-symbol-row"><code>P</code><span>Permutasi P-Box — mengatur ulang posisi bit (32 bit)</span></div>
+                <div class="des-symbol-row"><code>XOR</code><span>Operasi biner — menghasilkan 1 jika kedua bit berbeda</span></div>
+            </div>
+        </div>
+
+        {{-- Alur Singkat Operasi Round --}}
+        <div class="des-round-flow-wrap">
+            <p class="des-formula-legend-title">ALUR SINGKAT OPERASI ROUND</p>
+            <div class="des-round-flow-grid">
+                <div class="des-round-flow-step">
+                    <span class="des-round-flow-num">01</span>
+                    <div>
+                        <strong>Ekspansi E</strong>
+                        <p>Rᵢ₋₁ diekspansi dari 32 bit menjadi 48 bit menggunakan tabel E.</p>
+                    </div>
+                </div>
+                <div class="des-round-flow-step">
+                    <span class="des-round-flow-num">02</span>
+                    <div>
+                        <strong>XOR Subkey</strong>
+                        <p>Hasil ekspansi di-XOR dengan subkey Kᵢ (48 bit). Setiap round memakai subkey berbeda.</p>
+                    </div>
+                </div>
+                <div class="des-round-flow-step">
+                    <span class="des-round-flow-num">03</span>
+                    <div>
+                        <strong>S-Box</strong>
+                        <p>S-Box mengubah hasil XOR dari 48 bit menjadi 32 bit melalui 8 tabel substitusi.</p>
+                    </div>
+                </div>
+                <div class="des-round-flow-step">
+                    <span class="des-round-flow-num">04</span>
+                    <div>
+                        <strong>P-Box → Rᵢ</strong>
+                        <p>Hasil P-Box di-XOR dengan Lᵢ₋₁ untuk membentuk Rᵢ pada round berikutnya.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 </section>
 
@@ -637,9 +1137,10 @@
                 <h3>CIPHERTEXT TO PLAINTEXT</h3>
 
                 <div class="algorithm-form-group">
-                    <label for="des_ciphertext_hex">Ciphertext Hex 16 Karakter</label>
-                    <input id="des_ciphertext_hex" type="text" name="ciphertext_hex" class="algorithm-input" value="{{ $decryptCiphertext }}" maxlength="16" placeholder="3087603278814FB8">
-                    <div class="des-error" data-form-error="ciphertext_hex"></div>
+                    <label for="des_ciphertext_binary">Ciphertext Binary 64 Bit</label>
+                    <input id="des_ciphertext_binary" type="text" name="ciphertext_binary" class="algorithm-input" value="{{ $decryptCiphertextBinary }}" maxlength="64" placeholder="0101010101100101010011000100110001011110001010100111000010010001">
+                    <small class="des-field-hint">Masukkan ciphertext hasil enkripsi DES dalam bentuk biner 64 bit.</small>
+                    <div class="des-error" data-form-error="ciphertext_binary"></div>
                 </div>
 
                 <div class="algorithm-form-group">
@@ -804,8 +1305,9 @@
 </div>
 
 <script>
+    // ── DES scoped script ─────────────────────────────────────────────────────
     const desChallenges = @json($gameChallenges);
-    const desForms = document.querySelectorAll('[data-des-form]');
+    const desForms      = document.querySelectorAll('[data-des-form]');
     const desResultArea = document.querySelector('[data-des-result-area]');
     const desResetButton = document.querySelector('[data-des-reset]');
 
@@ -827,7 +1329,7 @@
             }
 
             if (decryptForm) {
-                decryptForm.querySelector('[name="ciphertext_hex"]').value = '';
+                decryptForm.querySelector('[name="ciphertext_binary"]').value = '';
                 decryptForm.querySelector('[name="key"]').value = 'UKMC2026';
             }
 
@@ -866,7 +1368,7 @@
 
         if (useDecryptButton) {
             const decryptForm = document.querySelector('[data-des-form="decrypt"]');
-            const ciphertextInput = document.querySelector('#des_ciphertext_hex');
+            const ciphertextInput = document.querySelector('#des_ciphertext_binary');
             const keyInput = document.querySelector('#des_decrypt_key');
 
             if (decryptForm && ciphertextInput && keyInput) {
@@ -935,94 +1437,203 @@
     }
 
     function renderDesResult(result) {
-        if (!desResultArea) {
-            return;
-        }
+        if (!desResultArea) { return; }
 
-        const isEncrypt = result.mode === 'encrypt';
-        const primaryLabel = isEncrypt ? 'Ciphertext Hex' : 'Plaintext Result';
-        const primaryValue = isEncrypt ? result.ciphertext_hex : result.plaintext;
-        const primaryId = isEncrypt ? 'des-cipher-output' : 'des-plain-output';
-        const rows = isEncrypt
+        const isEncrypt  = result.mode === 'encrypt';
+        const outputBin  = isEncrypt ? result.ciphertext_binary : result.plaintext_binary;
+        const outputId   = isEncrypt ? 'des-cipher-bin-output' : 'des-plain-bin-output';
+
+        // ── 1. Ringkasan Proses ─────────────────────────────────────────────
+        const summaryRows = isEncrypt
             ? [
-                ['Mode', result.mode_label],
-                ['Plaintext', result.plaintext],
-                ['Padded Plaintext', result.padded_plaintext],
-                ['Key', result.key],
-                ['Plaintext Hex', result.plaintext_hex],
-                ['Key Hex', result.key_hex],
-                ['Initial Permutation', result.initial_permutation_hex],
-                ['Final Swap Block', result.final_permutation_hex],
-                [primaryLabel, primaryValue, primaryId],
-                ['Round Count', `${result.round_count} rounds`],
-            ]
+                ['Mode',                     result.mode_label,                   false],
+                ['Plaintext',                result.plaintext,                    false],
+                ['Padded Plaintext',         result.padded_plaintext,             false],
+                ['Key',                      result.key,                          false],
+                ['Plaintext Binary (64-bit)',   result.plaintext_binary,          true, 8],
+                ['Key Binary (64-bit)',         result.key_binary,                true, 8],
+                ['Initial Permutation (64-bit)',result.initial_permutation_binary,true, 8],
+                ['Final Swap (64-bit)',         result.final_swap_binary,         true, 8],
+                ['Ciphertext Binary (64-bit)',  outputBin,                        true, 8, outputId],
+              ]
             : [
-                ['Mode', result.mode_label],
-                ['Ciphertext Hex', result.ciphertext_hex],
-                ['Key', result.key],
-                ['Key Hex', result.key_hex],
-                ['Plaintext Hex', result.plaintext_hex],
-                ['Initial Permutation', result.initial_permutation_hex],
-                ['Final Swap Block', result.final_permutation_hex],
-                [primaryLabel, primaryValue || '[EMPTY RESULT]', primaryId],
-                ['Round Count', `${result.round_count} rounds`],
-            ];
+                ['Mode',                     result.mode_label,                   false],
+                ['Key',                      result.key,                          false],
+                ['Ciphertext Binary (64-bit)', result.ciphertext_binary,          true, 8],
+                ['Key Binary (64-bit)',        result.key_binary,                 true, 8],
+                ['Initial Permutation (64-bit)',result.initial_permutation_binary,true, 8],
+                ['Final Swap (64-bit)',         result.final_swap_binary,         true, 8],
+                ['Plaintext Binary (64-bit)',   outputBin,                        true, 8, outputId],
+                ['Plaintext Result',          result.plaintext || '[EMPTY]',      false],
+              ];
 
+        const summaryHtml = summaryRows.map(([lbl, val, isBin, grp, id]) => {
+            const inner = isBin
+                ? desBinGroups(val, grp || 8, id)
+                : `<span style="color:var(--color-body);font-family:var(--font-mono);font-size:13px;">${escapeHtml(String(val))}</span>`;
+            return `<div class="des-bin-row">
+                        <span class="des-bin-label">${escapeHtml(lbl)}</span>
+                        <div class="des-bin-value">${inner}</div>
+                    </div>`;
+        }).join('');
+
+        // ── 2. Key Schedule K1–K16 ──────────────────────────────────────────
+        const scheduleRows = result.subkeys.map(sk => `
+            <tr>
+                <td>K${sk.round}</td>
+                <td>${sk.shift}</td>
+                <td>${desBinGroupsRaw(sk.c_binary, 4)}</td>
+                <td>${desBinGroupsRaw(sk.d_binary, 4)}</td>
+                <td>${desBinGroupsRaw(sk.subkey_binary, 6)}</td>
+            </tr>`).join('');
+
+        const scheduleHtml = `
+            <div class="des-key-table-wrap">
+                <table class="des-key-table">
+                    <thead>
+                        <tr>
+                            <th>Round</th>
+                            <th>Shift</th>
+                            <th>C (28-bit)</th>
+                            <th>D (28-bit)</th>
+                            <th>Subkey K (48-bit)</th>
+                        </tr>
+                    </thead>
+                    <tbody>${scheduleRows}</tbody>
+                </table>
+            </div>`;
+
+        // ── 3. 16 Round Detail (collapsible) ────────────────────────────────
+        const roundCards = result.rounds.map(r => {
+            const cardId = `des-round-card-${r.round}`;
+            const detailRows = [
+                ['L (32-bit)',        r.left_binary,      8],
+                ['R (32-bit)',        r.right_binary,     8],
+                ['Expansion E (48-bit)', r.expansion_binary, 6],
+                ['Subkey K (48-bit)', r.subkey_binary,    6],
+                ['XOR Result (48-bit)',  r.after_xor_binary, 6],
+                ['S-Box Out (32-bit)', r.sbox_output_binary, 4],
+                ['P-Box / F (32-bit)', r.pbox_binary,     4],
+            ].map(([lbl, val, grp]) => `
+                <div class="des-detail-row">
+                    <span class="des-detail-row-label">${escapeHtml(lbl)}</span>
+                    <div class="des-detail-row-value">${desBinGroupsRaw(val, grp)}</div>
+                </div>`).join('');
+
+            return `
+                <div class="des-detail-card algorithm-card" id="${cardId}">
+                    <div class="des-detail-header" onclick="desDetailToggle('${cardId}')">
+                        <div class="des-detail-header-left">
+                            <span class="des-detail-round-num">Round ${r.round}</span>
+                            <span class="des-detail-round-sub">K${r.round}: ${escapeHtml(r.subkey_binary.slice(0,12))}…</span>
+                        </div>
+                        <span class="des-detail-toggle">EXPAND ▼</span>
+                    </div>
+                    <div class="des-detail-body">${detailRows}</div>
+                </div>`;
+        }).join('');
+
+        // ── Assemble full output panel ───────────────────────────────────────
         desResultArea.innerHTML = `
-            <div class="algorithm-output-panel" style="margin-top: var(--space-xl);">
+            <div class="algorithm-output-panel" style="margin-top:var(--space-xl);">
                 <p class="caption">DES OUTPUT</p>
                 <h3>${escapeHtml(result.mode_label)}</h3>
 
-                <div class="algorithm-result-list">
-                    ${rows.map(([label, value, id]) => `
-                        <div class="algorithm-result-row">
-                            <span>${escapeHtml(label)}</span>
-                            <code class="algorithm-code-output" ${id ? `id="${id}"` : ''}>${escapeHtml(value)}</code>
-                        </div>
-                    `).join('')}
+                <div class="des-bin-section">
+                    <p class="des-bin-section-title">Ringkasan Proses</p>
+                    ${summaryHtml}
                 </div>
 
-                <p class="algorithm-note">${escapeHtml(result.note)}</p>
-
-                <div class="des-output-actions">
-                    <button type="button" class="button-secondary" data-copy-value="#${primaryId}">
-                        COPY ${isEncrypt ? 'CIPHERTEXT' : 'PLAINTEXT'}
+                <div class="des-output-actions" style="margin-top:var(--space-xl);">
+                    <button type="button" class="button-secondary" data-des-copy-id="${outputId}">
+                        COPY ${isEncrypt ? 'CIPHERTEXT BINARY' : 'PLAINTEXT BINARY'}
                     </button>
-
                     ${isEncrypt ? `
-                        <button type="button" class="button-secondary" data-use-des-decrypt data-ciphertext="${escapeHtml(result.ciphertext_hex)}" data-key="${escapeHtml(result.key)}">
+                        <button type="button" class="button-secondary"
+                            data-use-des-decrypt
+                            data-ciphertext="${escapeHtml(result.ciphertext_binary)}"
+                            data-key="${escapeHtml(result.key)}">
                             USE FOR DECRYPT
-                        </button>
-                    ` : ''}
+                        </button>` : ''}
                 </div>
 
-                <div class="des-feedback" data-copy-feedback></div>
+                <div class="des-feedback" data-copy-feedback style="margin-top:var(--space-sm);"></div>
 
-                <div class="des-round-heading">
-                    <p class="caption">ROUND SUMMARY</p>
-                    <h3>16 FEISTEL ROUNDS</h3>
+                <p class="algorithm-note" style="margin-top:var(--space-lg);">${escapeHtml(result.note)}</p>
+
+                <div class="des-bin-section">
+                    <p class="des-bin-section-title">Key Schedule K1 – K16</p>
+                    ${scheduleHtml}
                 </div>
 
-                <div class="des-round-grid">
-                    ${result.rounds.map((round) => `
-                        <article class="des-round-card algorithm-card">
-                            <span>Round ${round.round}</span>
-                            <strong>K${round.round}</strong>
-                            <code>Subkey: ${escapeHtml(round.subkey_hex)}</code>
-                            <code>F: ${escapeHtml(round.function_hex)}</code>
-                            <code>L: ${escapeHtml(round.left_hex)}</code>
-                            <code>R: ${escapeHtml(round.right_hex)}</code>
-                        </article>
-                    `).join('')}
+                <div class="des-bin-section">
+                    <p class="des-bin-section-title">16 Feistel Rounds — Klik round untuk expand detail</p>
+                    <div class="des-detail-grid">${roundCards}</div>
                 </div>
-            </div>
-        `;
+            </div>`;
+
+        // copy button handler (scoped, untuk tombol yang baru dirender)
+        const copyBtn = desResultArea.querySelector('[data-des-copy-id]');
+        if (copyBtn) {
+            copyBtn.addEventListener('click', async () => {
+                const targetId  = copyBtn.dataset.desCopyId;
+                const targetEl  = desResultArea.querySelector('#' + targetId);
+                const feedbackEl = desResultArea.querySelector('[data-copy-feedback]');
+                if (!targetEl) return;
+                try {
+                    // ambil hanya teks (hapus spasi antar grup)
+                    const raw = targetEl.querySelectorAll('.des-bin-group');
+                    const bits = Array.from(raw).map(el => el.textContent.trim()).join('');
+                    await navigator.clipboard.writeText(bits);
+                    if (feedbackEl) feedbackEl.textContent = 'COPIED';
+                } catch {
+                    if (feedbackEl) feedbackEl.textContent = 'COPY FAILED';
+                }
+                window.setTimeout(() => { if (feedbackEl) feedbackEl.textContent = ''; }, 1600);
+            });
+        }
 
         requestAnimationFrame(() => {
-            if (typeof initCyberCards === 'function') {
-                initCyberCards();
-            }
+            if (typeof initCyberCards === 'function') { initCyberCards(); }
         });
+    }
+
+    // ── Binary formatting helpers ─────────────────────────────────────────────
+
+    /**
+     * Render bit string sebagai span group, dengan optional id pada wrapper.
+     * Highlight = warna cyber untuk output utama.
+     */
+    function desBinGroups(bits, groupSize, wrapperId) {
+        if (!bits) return '<span style="color:var(--color-muted)">—</span>';
+        const attrs = wrapperId ? ` id="${wrapperId}"` : '';
+        const isHighlight = !!wrapperId;
+        const cls = isHighlight ? 'des-bin-group des-bin-group--highlight' : 'des-bin-group';
+        let html = `<span class="des-bin-value"${attrs}>`;
+        for (let i = 0; i < bits.length; i += groupSize) {
+            html += `<span class="${cls}">${escapeHtml(bits.slice(i, i + groupSize))}</span>`;
+        }
+        html += '</span>';
+        return html;
+    }
+
+    /** Sama tapi tanpa wrapper span — untuk dipakai di dalam cell tabel / detail row. */
+    function desBinGroupsRaw(bits, groupSize) {
+        if (!bits) return '<span style="color:var(--color-muted)">—</span>';
+        let html = '';
+        for (let i = 0; i < bits.length; i += groupSize) {
+            html += `<span class="des-bin-group">${escapeHtml(bits.slice(i, i + groupSize))}</span>`;
+        }
+        return html;
+    }
+
+    // ── Toggle round detail ───────────────────────────────────────────────────
+    function desDetailToggle(cardId) {
+        const card   = document.getElementById(cardId);
+        if (!card) return;
+        const isOpen = card.classList.toggle('is-open');
+        const toggle = card.querySelector('.des-detail-toggle');
+        if (toggle) toggle.textContent = isOpen ? 'COLLAPSE ▲' : 'EXPAND ▼';
     }
 
     function showDesErrors(form, errors) {

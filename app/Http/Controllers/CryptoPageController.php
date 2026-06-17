@@ -258,17 +258,17 @@ class CryptoPageController extends Controller
     private function processDesDecrypt(Request $request, DesService $desService): array
     {
         $validated = $request->validate([
-            'ciphertext_hex' => ['required', 'string', 'regex:/^[a-fA-F0-9]{16}$/'],
+            'ciphertext_binary' => ['required', 'string', 'regex:/^[01]{64}$/'],
             'key' => ['required', 'string', 'size:8'],
         ], [
-            'ciphertext_hex.required' => 'Ciphertext hex wajib diisi.',
-            'ciphertext_hex.regex' => 'Ciphertext hex wajib 16 karakter heksadesimal.',
+            'ciphertext_binary.required' => 'Ciphertext binary wajib diisi.',
+            'ciphertext_binary.regex' => 'Ciphertext binary wajib tepat 64 bit (hanya karakter 0 dan 1).',
             'key.required' => 'Key DES wajib diisi.',
             'key.size' => 'Key DES wajib tepat 8 karakter.',
         ]);
 
         return $desService->decryptText(
-            $validated['ciphertext_hex'],
+            $validated['ciphertext_binary'],
             $validated['key']
         );
     }

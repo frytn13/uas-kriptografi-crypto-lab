@@ -85,6 +85,10 @@ class DesService
         [[13,2,8,4,6,15,11,1,10,9,3,14,5,0,12,7],[1,15,13,8,10,3,7,4,12,5,6,11,0,14,9,2],[7,11,4,1,9,12,14,2,0,6,10,13,15,3,5,8],[2,1,14,7,4,10,8,13,15,12,9,0,3,5,6,11]],
     ];
 
+    // -------------------------------------------------------------------------
+    // Public methods
+    // -------------------------------------------------------------------------
+
     public function encryptText(string $plainText, string $key): array
     {
         $plainText = trim($plainText);
@@ -92,60 +96,88 @@ class DesService
         $this->validateKey($key);
 
         $paddedPlaintext = str_pad($plainText, 8, "\0");
-        $plainBits = $this->stringToBits($paddedPlaintext);
-        $keyBits = $this->stringToBits($key);
-        $process = $this->processBlock($plainBits, $keyBits, 'encrypt');
+        $plainBits       = $this->stringToBits($paddedPlaintext);
+        $keyBits         = $this->stringToBits($key);
+        $process         = $this->processBlock($plainBits, $keyBits, 'encrypt');
 
         return [
-            'mode' => 'encrypt',
+            // --- identitas ---
+            'mode'       => 'encrypt',
             'mode_label' => 'ENCRYPT DES',
-            'plaintext' => $plainText,
-            'padded_plaintext' => $this->displayPaddedText($paddedPlaintext),
-            'key' => $key,
-            'plaintext_hex' => strtoupper(bin2hex($paddedPlaintext)),
-            'key_hex' => strtoupper(bin2hex($key)),
-            'plaintext_binary' => $plainBits,
-            'key_binary' => $keyBits,
-            'ciphertext_hex' => $this->bitsToHex($process['output_bits']),
-            'ciphertext_binary' => $process['output_bits'],
-            'initial_permutation_hex' => $process['initial_permutation_hex'],
-            'final_permutation_hex' => $this->bitsToHex($process['preoutput_bits']),
-            'rounds' => $process['rounds'],
-            'subkeys' => $process['subkeys'],
+
+            // --- teks ---
+            'plaintext'         => $plainText,
+            'padded_plaintext'  => $this->displayPaddedText($paddedPlaintext),
+            'key'               => $key,
+
+            // --- binary utama (64-bit) ---
+            'plaintext_binary'            => $plainBits,
+            'key_binary'                  => $keyBits,
+            'initial_permutation_binary'  => $process['initial_permutation_bits'],
+            'final_swap_binary'           => $process['preoutput_bits'],
+            'ciphertext_binary'           => $process['output_bits'],
+            'final_permutation_binary'    => $process['output_bits'],
+
+            // --- hex (disimpan untuk kompatibilitas internal / copy) ---
+            'plaintext_hex'           => strtoupper(bin2hex($paddedPlaintext)),
+            'key_hex'                 => strtoupper(bin2hex($key)),
+            'ciphertext_hex'          => $this->bitsToHex($process['output_bits']),
+            'initial_permutation_hex' => $this->bitsToHex($process['initial_permutation_bits']),
+            'final_permutation_hex'   => $this->bitsToHex($process['preoutput_bits']),
+
+            // --- proses ---
+            'rounds'      => $process['rounds'],
+            'subkeys'     => $process['subkeys'],
             'round_count' => 16,
+
             'note' => 'Plaintext diproses sebagai satu blok 64-bit. Jika input kurang dari 8 karakter, sistem menambahkan null padding untuk kebutuhan demonstrasi.',
         ];
     }
 
-    public function decryptText(string $cipherHex, string $key): array
+    /**
+     * Dekripsi menerima ciphertext dalam format biner 64-bit.
+     */
+    public function decryptText(string $cipherBinary, string $key): array
     {
-        $cipherHex = strtoupper(trim($cipherHex));
-        $this->validateCipherHex($cipherHex);
+        $cipherBinary = trim($cipherBinary);
+        $this->validateCipherBinary($cipherBinary);
         $this->validateKey($key);
 
-        $cipherBits = $this->hexToBits($cipherHex);
-        $keyBits = $this->stringToBits($key);
-        $process = $this->processBlock($cipherBits, $keyBits, 'decrypt');
+        $keyBits  = $this->stringToBits($key);
+        $process  = $this->processBlock($cipherBinary, $keyBits, 'decrypt');
         $plainBytes = $this->bitsToString($process['output_bits']);
-        $plainText = rtrim($plainBytes, "\0");
+        $plainText  = rtrim($plainBytes, "\0");
 
         return [
-            'mode' => 'decrypt',
+            // --- identitas ---
+            'mode'       => 'decrypt',
             'mode_label' => 'DECRYPT DES',
-            'ciphertext_hex' => $cipherHex,
-            'key' => $key,
-            'key_hex' => strtoupper(bin2hex($key)),
-            'ciphertext_binary' => $cipherBits,
-            'key_binary' => $keyBits,
+
+            // --- teks ---
             'plaintext' => $plainText,
-            'plaintext_hex' => strtoupper(bin2hex($plainBytes)),
-            'plaintext_binary' => $process['output_bits'],
-            'initial_permutation_hex' => $process['initial_permutation_hex'],
-            'final_permutation_hex' => $this->bitsToHex($process['preoutput_bits']),
-            'rounds' => $process['rounds'],
-            'subkeys' => $process['subkeys'],
+            'key'       => $key,
+
+            // --- binary utama ---
+            'ciphertext_binary'           => $cipherBinary,
+            'key_binary'                  => $keyBits,
+            'initial_permutation_binary'  => $process['initial_permutation_bits'],
+            'final_swap_binary'           => $process['preoutput_bits'],
+            'plaintext_binary'            => $process['output_bits'],
+            'final_permutation_binary'    => $process['output_bits'],
+
+            // --- hex (kompatibilitas internal) ---
+            'ciphertext_hex'          => $this->bitsToHex($cipherBinary),
+            'key_hex'                 => strtoupper(bin2hex($key)),
+            'plaintext_hex'           => strtoupper(bin2hex($plainBytes)),
+            'initial_permutation_hex' => $this->bitsToHex($process['initial_permutation_bits']),
+            'final_permutation_hex'   => $this->bitsToHex($process['preoutput_bits']),
+
+            // --- proses ---
+            'rounds'      => $process['rounds'],
+            'subkeys'     => $process['subkeys'],
             'round_count' => 16,
-            'note' => 'Dekripsi memakai subkey DES dengan urutan terbalik. Null padding di akhir plaintext disembunyikan dari hasil teks.',
+
+            'note' => 'Dekripsi memakai subkey DES dengan urutan terbalik (K16→K1). Null padding di akhir plaintext disembunyikan dari hasil teks.',
         ];
     }
 
@@ -153,79 +185,99 @@ class DesService
     {
         return [
             [
-                'id' => 1,
-                'title' => 'DES ENCRYPT FLOW',
-                'prompt' => 'Susun urutan proses utama enkripsi DES.',
-                'answer' => ['Initial Permutation', 'Split L0/R0', '16 Feistel Rounds', 'Final Permutation'],
+                'id'      => 1,
+                'title'   => 'DES ENCRYPT FLOW',
+                'prompt'  => 'Susun urutan proses utama enkripsi DES.',
+                'answer'  => ['Initial Permutation', 'Split L0/R0', '16 Feistel Rounds', 'Final Permutation'],
                 'options' => ['Final Permutation', 'Split L0/R0', 'Initial Permutation', '16 Feistel Rounds'],
-                'hint' => 'DES memulai proses dengan permutasi awal sebelum data dibagi menjadi sisi kiri dan kanan.',
+                'hint'    => 'DES memulai proses dengan permutasi awal sebelum data dibagi menjadi sisi kiri dan kanan.',
             ],
             [
-                'id' => 2,
-                'title' => 'KEY SCHEDULE',
-                'prompt' => 'Susun urutan pembentukan subkey DES.',
-                'answer' => ['PC-1', 'Split C0/D0', 'Left Shift', 'PC-2'],
+                'id'      => 2,
+                'title'   => 'KEY SCHEDULE',
+                'prompt'  => 'Susun urutan pembentukan subkey DES.',
+                'answer'  => ['PC-1', 'Split C0/D0', 'Left Shift', 'PC-2'],
                 'options' => ['PC-2', 'Left Shift', 'PC-1', 'Split C0/D0'],
-                'hint' => 'Key 64-bit diproses terlebih dahulu oleh PC-1 sebelum dibagi menjadi C dan D.',
+                'hint'    => 'Key 64-bit diproses terlebih dahulu oleh PC-1 sebelum dibagi menjadi C dan D.',
             ],
             [
-                'id' => 3,
-                'title' => 'ROUND FUNCTION',
-                'prompt' => 'Susun urutan fungsi F pada satu round DES.',
-                'answer' => ['Expansion', 'XOR Subkey', 'S-Box', 'P-Box'],
+                'id'      => 3,
+                'title'   => 'ROUND FUNCTION',
+                'prompt'  => 'Susun urutan fungsi F pada satu round DES.',
+                'answer'  => ['Expansion', 'XOR Subkey', 'S-Box', 'P-Box'],
                 'options' => ['S-Box', 'Expansion', 'P-Box', 'XOR Subkey'],
-                'hint' => 'R sisi kanan perlu diperluas dari 32-bit menjadi 48-bit sebelum di-XOR dengan subkey.',
+                'hint'    => 'R sisi kanan perlu diperluas dari 32-bit menjadi 48-bit sebelum di-XOR dengan subkey.',
             ],
             [
-                'id' => 4,
-                'title' => 'DECRYPT LOGIC',
-                'prompt' => 'Susun ide dasar dekripsi DES.',
-                'answer' => ['Ciphertext 64-bit', 'Reverse Subkeys', '16 Feistel Rounds', 'Plaintext 64-bit'],
+                'id'      => 4,
+                'title'   => 'DECRYPT LOGIC',
+                'prompt'  => 'Susun ide dasar dekripsi DES.',
+                'answer'  => ['Ciphertext 64-bit', 'Reverse Subkeys', '16 Feistel Rounds', 'Plaintext 64-bit'],
                 'options' => ['Plaintext 64-bit', '16 Feistel Rounds', 'Ciphertext 64-bit', 'Reverse Subkeys'],
-                'hint' => 'Dekripsi DES memakai struktur yang sama, tetapi subkey dipakai dari K16 sampai K1.',
+                'hint'    => 'Dekripsi DES memakai struktur yang sama, tetapi subkey dipakai dari K16 sampai K1.',
             ],
         ];
     }
 
+    // -------------------------------------------------------------------------
+    // Core DES block processing
+    // -------------------------------------------------------------------------
+
     private function processBlock(string $blockBits, string $keyBits, string $mode): array
     {
         $keySchedule = $this->generateSubkeys($keyBits);
-        $subkeys = $keySchedule['subkeys'];
+        $subkeys     = $keySchedule['subkeys'];
 
         if ($mode === 'decrypt') {
             $subkeys = array_reverse($subkeys);
         }
 
         $initialPermutation = $this->permute($blockBits, self::IP);
-        $left = substr($initialPermutation, 0, 32);
+        $left  = substr($initialPermutation, 0, 32);
         $right = substr($initialPermutation, 32, 32);
         $rounds = [];
 
         foreach ($subkeys as $index => $subkey) {
-            $functionOutput = $this->roundFunction($right, $subkey['bits']);
-            $newLeft = $right;
-            $newRight = $this->xorBits($left, $functionOutput);
+            $roundDetail  = $this->roundFunction($right, $subkey['bits']);
+            $functionBits = $roundDetail['output'];
 
-            $left = $newLeft;
+            $newLeft  = $right;
+            $newRight = $this->xorBits($left, $functionBits);
+
+            $left  = $newLeft;
             $right = $newRight;
 
             $rounds[] = [
+                // --- nomor round ---
                 'round' => $index + 1,
-                'subkey_hex' => $subkey['hex'],
-                'function_hex' => $this->bitsToHex($functionOutput),
-                'left_hex' => $this->bitsToHex($left),
-                'right_hex' => $this->bitsToHex($right),
+
+                // --- binary (output utama) ---
+                'subkey_binary'    => $subkey['bits'],        // 48-bit
+                'expansion_binary' => $roundDetail['expansion'],  // 48-bit
+                'after_xor_binary' => $roundDetail['after_xor'],  // 48-bit
+                'sbox_output_binary' => $roundDetail['sbox_output'], // 32-bit
+                'pbox_binary'      => $roundDetail['output'],   // 32-bit (= F output)
+                'function_binary'  => $roundDetail['output'],   // 32-bit alias
+                'left_binary'      => $left,                   // 32-bit
+                'right_binary'     => $right,                  // 32-bit
+
+                // --- hex (kompatibilitas tampilan lama) ---
+                'subkey_hex'   => $subkey['hex'],
+                'function_hex' => $this->bitsToHex($functionBits),
+                'left_hex'     => $this->bitsToHex($left),
+                'right_hex'    => $this->bitsToHex($right),
             ];
         }
 
-        $preOutput = $right . $left;
+        $preOutput  = $right . $left;   // Final swap: R16 || L16 — 64-bit
         $outputBits = $this->permute($preOutput, self::FP);
 
         return [
-            'output_bits' => $outputBits,
-            'preoutput_bits' => $preOutput,
+            'output_bits'             => $outputBits,          // 64-bit
+            'preoutput_bits'          => $preOutput,           // 64-bit (final swap)
+            'initial_permutation_bits' => $initialPermutation, // 64-bit
             'initial_permutation_hex' => $this->bitsToHex($initialPermutation),
-            'rounds' => $rounds,
+            'rounds'  => $rounds,
             'subkeys' => $keySchedule['display'],
         ];
     }
@@ -241,21 +293,26 @@ class DesService
         foreach (self::SHIFTS as $index => $shift) {
             $c = $this->leftShift($c, $shift);
             $d = $this->leftShift($d, $shift);
-            $combined = $c . $d;
+            $combined   = $c . $d;
             $subkeyBits = $this->permute($combined, self::PC2);
 
             $subkeys[] = [
                 'round' => $index + 1,
-                'bits' => $subkeyBits,
-                'hex' => $this->bitsToHex($subkeyBits),
+                'bits'  => $subkeyBits,
+                'hex'   => $this->bitsToHex($subkeyBits),
             ];
 
             $display[] = [
-                'round' => $index + 1,
-                'shift' => $shift,
-                'c_hex' => $this->bitsToHex($c),
-                'd_hex' => $this->bitsToHex($d),
-                'subkey_hex' => $this->bitsToHex($subkeyBits),
+                'round'          => $index + 1,
+                'shift'          => $shift,
+                // binary (tampilan utama)
+                'c_binary'       => $c,
+                'd_binary'       => $d,
+                'subkey_binary'  => $subkeyBits,
+                // hex (kompatibilitas)
+                'c_hex'          => $this->bitsToHex($c),
+                'd_hex'          => $this->bitsToHex($d),
+                'subkey_hex'     => $this->bitsToHex($subkeyBits),
             ];
         }
 
@@ -265,13 +322,22 @@ class DesService
         ];
     }
 
-    private function roundFunction(string $rightBits, string $subkeyBits): string
+    /**
+     * Fungsi F per round — sekarang mengembalikan array detail biner.
+     */
+    private function roundFunction(string $rightBits, string $subkeyBits): array
     {
-        $expanded = $this->permute($rightBits, self::E);
-        $xored = $this->xorBits($expanded, $subkeyBits);
-        $substituted = $this->sBoxSubstitution($xored);
+        $expanded    = $this->permute($rightBits, self::E);   // 48-bit
+        $xored       = $this->xorBits($expanded, $subkeyBits); // 48-bit
+        $substituted = $this->sBoxSubstitution($xored);        // 32-bit
+        $permuted    = $this->permute($substituted, self::P);  // 32-bit
 
-        return $this->permute($substituted, self::P);
+        return [
+            'output'      => $permuted,    // F output = P-Box output
+            'expansion'   => $expanded,
+            'after_xor'   => $xored,
+            'sbox_output' => $substituted,
+        ];
     }
 
     private function sBoxSubstitution(string $bits): string
@@ -279,15 +345,19 @@ class DesService
         $output = '';
 
         for ($box = 0; $box < 8; $box++) {
-            $chunk = substr($bits, $box * 6, 6);
-            $row = bindec($chunk[0] . $chunk[5]);
+            $chunk  = substr($bits, $box * 6, 6);
+            $row    = bindec($chunk[0] . $chunk[5]);
             $column = bindec(substr($chunk, 1, 4));
-            $value = self::S_BOXES[$box][$row][$column];
+            $value  = self::S_BOXES[$box][$row][$column];
             $output .= str_pad(decbin($value), 4, '0', STR_PAD_LEFT);
         }
 
         return $output;
     }
+
+    // -------------------------------------------------------------------------
+    // Validation
+    // -------------------------------------------------------------------------
 
     private function validatePlaintext(string $plainText): void
     {
@@ -311,10 +381,13 @@ class DesService
         $this->ensurePrintableAscii($key, 'Key');
     }
 
-    private function validateCipherHex(string $cipherHex): void
+    /**
+     * Validasi ciphertext binary: tepat 64 karakter, hanya 0 dan 1.
+     */
+    private function validateCipherBinary(string $cipherBinary): void
     {
-        if (! preg_match('/^[A-F0-9]{16}$/', $cipherHex)) {
-            throw new InvalidArgumentException('Ciphertext DES wajib 16 karakter heksadesimal.');
+        if (! preg_match('/^[01]{64}$/', $cipherBinary)) {
+            throw new InvalidArgumentException('Ciphertext DES wajib tepat 64 bit biner (hanya karakter 0 dan 1).');
         }
     }
 
@@ -331,9 +404,13 @@ class DesService
         }
     }
 
+    // -------------------------------------------------------------------------
+    // Bit / string helpers
+    // -------------------------------------------------------------------------
+
     private function stringToBits(string $value): string
     {
-        $bits = '';
+        $bits   = '';
         $length = strlen($value);
 
         for ($index = 0; $index < $length; $index++) {
