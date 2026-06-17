@@ -4,6 +4,66 @@
 
 @section('content')
 <style>
+    /* ===== EMERGENCY HOVER FIX ===== */
+    /* Override aggressive tilt from app.js without waiting for file update */
+    .cyber-motion-card {
+        transform-style: flat !important;
+        perspective: none !important;
+    }
+    
+    .cyber-motion-card * {
+        transform-style: flat !important;
+        perspective: none !important;
+    }
+    
+    /* Base state — gentle movement only */
+    .cyber-motion-card {
+        transform: translate3d(0, 0, 0) !important;
+        transition: transform 280ms ease-out, border-color 220ms ease, background 220ms ease !important;
+    }
+    
+    /* Active state — very gentle lift, NO tilt */
+    .cyber-motion-card.is-card-active {
+        border-color: rgba(124, 255, 178, 0.52) !important;
+        transform: translate3d(0, -3px, 0) scale(1.004) !important;
+    }
+    
+    /* Big panels — MUST be flat */
+    .algorithm-form-panel,
+    .algorithm-output-panel,
+    .algorithm-game-panel,
+    .hash-form-panel,
+    .hash-output-panel,
+    .hash-game-panel,
+    .rsa-form-panel {
+        transform: translate3d(0, 0, 0) !important;
+        transform-style: flat !important;
+        perspective: none !important;
+    }
+    
+    .algorithm-form-panel.cyber-motion-card.is-card-active,
+    .algorithm-output-panel.cyber-motion-card.is-card-active,
+    .algorithm-game-panel.cyber-motion-card.is-card-active {
+        transform: translate3d(0, -2px, 0) !important;
+    }
+    
+    /* DES result area — FLAT */
+    [data-des-result-area],
+    [data-des-result-area] * {
+        transform: none !important;
+        transform-style: flat !important;
+        perspective: none !important;
+    }
+    
+    /* Touch devices — NO tilt */
+    @media not all and (hover: hover) and (pointer: fine) {
+        .cyber-motion-card,
+        .cyber-motion-card.is-card-active {
+            transform: translate3d(0, 0, 0) !important;
+        }
+    }
+    /* ===== END EMERGENCY FIX ===== */
+
     .des-page {
         --des-card-min: 220px;
     }
