@@ -964,6 +964,9 @@ function initHoverScramble() {
 }
 
 function initCyberCards() {
+    // Hanya aktifkan tilt di perangkat dengan pointer presisi (mouse/trackpad)
+    const hasFinePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
     const cards = Array.from(
         document.querySelectorAll(
             [
@@ -1032,14 +1035,15 @@ function initCyberCards() {
         function updateCardFrame() {
             state.frame = null;
 
+            // Lerp lebih lambat = gerakan lebih smooth, tidak banting
             state.currentTiltX +=
-                (state.targetTiltX - state.currentTiltX) * 0.16;
+                (state.targetTiltX - state.currentTiltX) * 0.10;
             state.currentTiltY +=
-                (state.targetTiltY - state.currentTiltY) * 0.16;
+                (state.targetTiltY - state.currentTiltY) * 0.10;
             state.currentPointerX +=
-                (state.targetPointerX - state.currentPointerX) * 0.18;
+                (state.targetPointerX - state.currentPointerX) * 0.12;
             state.currentPointerY +=
-                (state.targetPointerY - state.currentPointerY) * 0.18;
+                (state.targetPointerY - state.currentPointerY) * 0.12;
 
             card.style.setProperty(
                 "--tilt-x",
@@ -1070,12 +1074,21 @@ function initCyberCards() {
         }
 
         card.addEventListener("pointerenter", () => {
+            if (!hasFinePointer) return;
             state.isActive = true;
             card.classList.add("is-card-active");
             requestCardFrame();
         });
 
         card.addEventListener("pointermove", (event) => {
+            if (!hasFinePointer) return;
+
+            // Panel besar dan output/form panel: tidak perlu tilt, cukup glow
+            const isStablePanel = card.matches(
+                '.algorithm-output-panel, .algorithm-form-panel, .algorithm-game-panel, ' +
+                '.hash-form-panel, .hash-output-panel, .hash-game-panel, .rsa-form-panel'
+            );
+
             const rect = card.getBoundingClientRect();
             const pointerX = event.clientX - rect.left;
             const pointerY = event.clientY - rect.top;
@@ -1083,8 +1096,10 @@ function initCyberCards() {
             const percentX = Math.max(0, Math.min(1, pointerX / rect.width));
             const percentY = Math.max(0, Math.min(1, pointerY / rect.height));
 
-            state.targetTiltX = (0.5 - percentY) * 7;
-            state.targetTiltY = (percentX - 0.5) * 7;
+            // Tilt ringan: max ±1.0deg untuk card kecil, 0 untuk panel besar
+            const maxTilt = isStablePanel ? 0 : 1.0;
+            state.targetTiltX = (0.5 - percentY) * (maxTilt * 2);
+            state.targetTiltY = (percentX - 0.5) * (maxTilt * 2);
             state.targetPointerX = percentX * 100;
             state.targetPointerY = percentY * 100;
 
@@ -1092,6 +1107,7 @@ function initCyberCards() {
         });
 
         card.addEventListener("pointerleave", () => {
+            if (!hasFinePointer) return;
             state.isActive = false;
             state.targetTiltX = 0;
             state.targetTiltY = 0;
